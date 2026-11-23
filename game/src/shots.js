@@ -68,7 +68,7 @@ export function stageShot(mode, ctx) {
       { x: 176, z: 34, h: Math.PI / 2, speed: 13 },
       { x: 240, z: 28, h: -Math.PI / 2, speed: 10 },
     ]);
-    showHeli(ctx, 255, 30, 55);
+    showHeli(ctx, 268, 14, 50);
     const rt = createMissionRuntime(missionById('m2'), ctx);
     rt.stageIndex = 0;
     state.mission = rt;
@@ -95,11 +95,13 @@ export function stageShot(mode, ctx) {
     city.applyTimeOfDay('golden');
     state.timeOfDay = 'golden';
     state.clockMinutes = 18 * 60 + 5;
-    putPlayerInCar(ctx, 70, 32, Math.PI / 2, 18);
+    // Westbound through downtown, toward the hideout (the timed run's goal).
+    putPlayerInCar(ctx, 0, 32, -Math.PI / 2, 18);
     seedTraffic(ctx, [
-      { x: 120, z: 30, h: Math.PI / 2, speed: 13 },
-      { x: 132, z: 36, h: Math.PI / 2, speed: 12 },
-      { x: 76, z: 34, h: Math.PI / 2, speed: 14 },
+      { x: -20, z: 30, h: -Math.PI / 2, speed: 13 },
+      { x: -32, z: 36, h: -Math.PI / 2, speed: 12 },
+      { x: 20, z: 34, h: -Math.PI / 2, speed: 14 },
+      { x: -64, z: -64, h: 0, speed: 11 },
     ]);
     const rt = createMissionRuntime(missionById('m2'), ctx);
     rt.stageIndex = 1; // timed cross-city stage
@@ -116,13 +118,13 @@ export function stageShot(mode, ctx) {
     city.applyTimeOfDay('night');
     state.timeOfDay = 'night';
     state.clockMinutes = 21 * 60 + 40;
-    putPlayerInCar(ctx, 160, -32, Math.PI / 2, 12);
+    putPlayerInCar(ctx, 188, -32, Math.PI / 2, 12);
     seedTraffic(ctx, [
       { x: 210, z: -30, h: Math.PI / 2, speed: 11 },
       { x: 222, z: -36, h: Math.PI / 2, speed: 10 },
       { x: 168, z: -34, h: Math.PI / 2, speed: 12 },
     ]);
-    showHeli(ctx, 245, 28, -20);
+    showHeli(ctx, 250, 12, -18);
     ctx.hud.say('MARTA', 'The boulevard never sleeps. Neither do we.');
     state.cameraZoom = 1.1;
   }

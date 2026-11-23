@@ -285,8 +285,10 @@ export function createCity(scene) {
   }
 
   // --- Palms along the coastal boulevard + beach umbrellas ---
+  // (kept clear of the pier approach road z=32 so no palm blocks the cover)
   for (let z = -288; z <= 288; z += 32) {
     for (const x of [226, 252]) {
+      if (Math.abs(z - 32) < 14) continue;
       const palm = buildPalm(rng);
       palm.position.set(x + rng.range(-3, 3), 0, z + rng.range(-6, 6));
       scene.add(palm);

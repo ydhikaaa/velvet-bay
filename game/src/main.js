@@ -238,8 +238,11 @@ function step(dt) {
   if (state.clockMinutes >= 1440) state.clockMinutes -= 1440;
 
   // Screenshot staging: keep the car rolling so chase shots read as
-  // mid-action (the car drives toward the pier while the scene settles).
-  if (shotMode && state.player.inCar) input.keys.add('up');
+  // mid-action (the car drives while the scene settles). The night shot
+  // stays parked on the boulevard: beams + lamps + palms do the work.
+  if ((shotMode === 'cover' || shotMode === 'mission') && state.player.inCar) {
+    input.keys.add('up');
+  }
 
   // Auto time-of-day from the clock (skipped in shot mode).
   if (!shotMode) {
