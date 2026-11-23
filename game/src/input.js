@@ -1,16 +1,14 @@
-// Keyboard + mouse input for Velvet Bay. Tracks held keys and drag-look deltas;
-// the player and vehicle systems consume this state every frame.
-
+// Velvet Bay — keyboard / mouse / wheel input.
+// Written fresh for round 10 (attempt 5).
 export function createInput(canvas) {
   const keys = new Set();
-  const input = {
+  const state = {
     keys,
-    lookDX: 0,
-    lookDY: 0,
-    mouseDown: false,
-    mouseClicked: false,   // consumed once per frame by combat
+    lookDX: 0, lookDY: 0, // accumulated drag deltas, consumed per frame
+    wheel: 0, // accumulated wheel delta, consumed per frame
+    shootPressed: false,
     dragging: false,
-    pressed: new Set(),    // keys pressed since last consume (edge-triggered)
+    lastX: 0, lastY: 0,
   };
 
   const KEYMAP = {
@@ -19,20 +17,21 @@ export function createInput(canvas) {
     KeyA: 'left', ArrowLeft: 'left',
     KeyD: 'right', ArrowRight: 'right',
     ShiftLeft: 'run', ShiftRight: 'run',
+    Space: 'brake',
     KeyE: 'enter',
     KeyF: 'shoot',
-    Space: 'brake',
+    KeyR: 'retry',
     KeyP: 'pause',
     KeyM: 'music',
-    KeyR: 'restart',
+    Digit1: 'slot1', Digit2: 'slot2', Digit3: 'slot3', Digit4: 'slot4',
   };
 
   window.addEventListener('keydown', (e) => {
     const action = KEYMAP[e.code];
     if (action) {
-      if (!keys.has(action)) input.pressed.add(action);
       keys.add(action);
-      if (action === 'brake' || action === 'up' || action === 'down') e.preventDefault();
+      if (['up', 'down', 'left', 'right', 'brake'].includes(action)) e.preventDefault();
+      if (action === 'shoot') state.shootPressed = true;
     }
   });
   window.addEventListener('keyup', (e) => {
@@ -41,31 +40,38 @@ export function createInput(canvas) {
   });
   window.addEventListener('blur', () => keys.clear());
 
-  let lastX = 0, lastY = 0;
   canvas.addEventListener('mousedown', (e) => {
-    input.mouseDown = true;
-    input.dragging = true;
-    input.mouseClicked = true;
-    lastX = e.clientX; lastY = e.clientY;
+    state.dragging = true; state.lastX = e.clientX; state.lastY = e.clientY;
+    if (e.button === 0) state.shootPressed = true;
   });
-  window.addEventListener('mouseup', () => {
-    input.mouseDown = false;
-    input.dragging = false;
-  });
+  window.addEventListener('mouseup', () => { state.dragging = false; });
   window.addEventListener('mousemove', (e) => {
-    if (!input.dragging) return;
-    input.lookDX += e.clientX - lastX;
-    input.lookDY += e.clientY - lastY;
-    lastX = e.clientX; lastY = e.clientY;
+    if (!state.dragging) return;
+    state.lookDX += e.clientX - state.lastX;
+    state.lookDY += e.clientY - state.lastY;
+    state.lastX = e.clientX; state.lastY = e.clientY;
   });
+  canvas.addEventListener('wheel', (e) => {
+    state.wheel += e.deltaY;
+    e.preventDefault();
+  }, { passive: false });
+  canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
-  input.isDown = (a) => keys.has(a);
-  input.wasPressed = (a) => input.pressed.has(a);
-  input.endFrame = () => {
-    input.pressed.clear();
-    input.mouseClicked = false;
-    input.lookDX = 0;
-    input.lookDY = 0;
+  // One-shot helpers: consume a key press exactly once.
+  state.pressed = (action) => {
+    if (keys.has(action)) { keys.delete(action); return true; }
+    return false;
   };
-  return input;
+  state.consumeLook = () => {
+    const dx = state.lookDX, dy = state.lookDY;
+    state.lookDX = 0; state.lookDY = 0;
+    return { dx, dy };
+  };
+  state.consumeWheel = () => {
+    const w = state.wheel; state.wheel = 0; return w;
+  };
+  state.consumeShoot = () => {
+    const s = state.shootPressed; state.shootPressed = false; return s;
+  };
+  return state;
 }
