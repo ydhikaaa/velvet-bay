@@ -81,7 +81,7 @@ export function stageShot(mode, ctx) {
     city.applyTimeOfDay('noon');
     state.timeOfDay = 'noon';
     state.clockMinutes = 12 * 60 + 10;
-    putPlayerOnFoot(ctx, 8, 8, Math.PI * 0.85);
+    putPlayerOnFoot(ctx, 20, 44, Math.PI * 0.85);
     seedTraffic(ctx, [
       { x: 24, z: -32, h: 0, speed: 10 },
       { x: -24, z: 32, h: Math.PI, speed: 9 },
@@ -107,7 +107,7 @@ export function stageShot(mode, ctx) {
     state.mission = rt;
     state.missionId = 'm2';
     ctx.hud.say('DELIA', 'Clock is running — 87 seconds to the hideout. Do not stop for anyone.');
-    ctx.city.setBeacon(-256, 192, true);
+    ctx.city.setBeacon(-224, 192, true);
     state.wanted = 2;
     state.wantedHeat = 45;
     state.cameraZoom = 1.0;

@@ -162,7 +162,7 @@ export function createHud(state, getCtx) {
     } else if (ctx.nextMission) {
       mctx.fillStyle = '#ffd23e';
       mctx.beginPath();
-      mctx.arc(toX(-64), toY(-64), 5, 0, 7);
+      mctx.arc(toX(-32), toY(-32), 5, 0, 7);
       mctx.fill();
     }
     // Police diamonds.

@@ -71,7 +71,7 @@ export function createVehicles(scene, state) {
   }
 
   // Player's starting ride + parked cars to steal.
-  const playerCar = spawnCar(28, 60, Math.PI / 2, 'player');
+  const playerCar = spawnCar(28, 32, Math.PI / 2, 'player');
   playerCar.maxSpeed = 38;
   for (let i = 0; i < 16; i++) {
     const p = randomRoadPoint(rng);

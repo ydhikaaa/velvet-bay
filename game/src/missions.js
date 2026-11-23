@@ -9,8 +9,8 @@ export const MISSIONS = [
     id: 'm1', title: 'FIRST WHEELS', giver: 'Delia Voss', pay: 800,
     brief: 'Rio, you need wheels before you need work. Get in a car, any car, then bring it to my office.',
     stages: [
-      { type: 'goto', x: 28, z: 60, r: 6, text: 'Get in a car — press E near any ride', needCar: true },
-      { type: 'goto', x: -64, z: -64, r: 8, text: 'Drive to Delia\u2019s office, Downtown' },
+      { type: 'goto', x: 28, z: 32, r: 6, text: 'Get in a car — press E near any ride', needCar: true },
+      { type: 'goto', x: -32, z: -32, r: 8, text: 'Drive to Delia\u2019s office, Downtown' },
     ],
   },
   {
@@ -18,9 +18,9 @@ export const MISSIONS = [
     brief: 'A package is waiting on the pier. Grab it, then run it across the city before the clock dies. Lose the heat, then vanish into the hideout.',
     stages: [
       { type: 'goto', x: 296, z: 32, r: 7, text: 'Pick up the package at the end of the pier' },
-      { type: 'timed', x: -256, z: 192, r: 10, time: 120, text: 'Cross-city run — reach the hideout in 2:00' },
+      { type: 'timed', x: -224, z: 192, r: 10, time: 120, text: 'Cross-city run — reach the hideout in 2:00' },
       { type: 'losewanted', text: 'Lose the heat — stay out of sight until the stars clear' },
-      { type: 'goto', x: -256, z: 192, r: 10, text: 'Slip into the hideout' },
+      { type: 'goto', x: -224, z: 192, r: 10, text: 'Slip into the hideout' },
     ],
   },
   {
@@ -29,7 +29,7 @@ export const MISSIONS = [
     stages: [
       { type: 'goto', x: 296, z: 32, r: 7, text: 'Meet the pier crew' },
       { type: 'kill', x: -192, z: -192, r: 18, count: 4, text: 'Clear the Red Tide crew at the dockyard (4)' },
-      { type: 'goto', x: -64, z: -64, r: 8, text: 'Report back to Delia' },
+      { type: 'goto', x: -32, z: -32, r: 8, text: 'Report back to Delia' },
     ],
   },
   {
@@ -37,7 +37,7 @@ export const MISSIONS = [
     brief: 'Three drops, one clock, no excuses. Hit every checkpoint and the money is yours.',
     stages: [
       { type: 'timed', x: 192, z: -192, r: 9, time: 60, text: 'Checkpoint 1/3 — Coastal north (1:00)' },
-      { type: 'timed', x: 192, z: 192, r: 9, time: 60, text: 'Checkpoint 2/3 — Marina (1:00)' },
+      { type: 'timed', x: 224, z: 192, r: 9, time: 60, text: 'Checkpoint 2/3 — Marina (1:00)' },
       { type: 'timed', x: -192, z: 192, r: 9, time: 60, text: 'Checkpoint 3/3 — Residential west (1:00)' },
     ],
   },
@@ -46,8 +46,8 @@ export const MISSIONS = [
     brief: 'This one is quiet. Escort the courier van across town. If the Bay PD so much as looks at you, the deal is dead.',
     stealth: true,
     stages: [
-      { type: 'goto', x: -64, z: 256, r: 8, text: 'Meet the courier van in Old Town' },
-      { type: 'escort', toX: 192, toZ: 256, text: 'Escort the van to the Marina — stay close, stay clean' },
+      { type: 'goto', x: -32, z: 224, r: 8, text: 'Meet the courier van in Old Town' },
+      { type: 'escort', toX: 192, toZ: 224, text: 'Escort the van to the Marina — stay close, stay clean' },
     ],
   },
   {
@@ -55,7 +55,7 @@ export const MISSIONS = [
     brief: 'The gang thinks the dockyard is theirs. Take it back, then bring me proof.',
     stages: [
       { type: 'kill', x: -192, z: -192, r: 20, count: 6, text: 'Take the dockyard — defeat the Red Tide (6)' },
-      { type: 'goto', x: -64, z: -64, r: 8, text: 'Bring word back to Delia' },
+      { type: 'goto', x: -32, z: -32, r: 8, text: 'Bring word back to Delia' },
     ],
   },
   {
@@ -64,18 +64,18 @@ export const MISSIONS = [
     night: true,
     stages: [
       { type: 'goto', x: 0, z: 96, r: 8, text: 'Pick up the goods in the Entertainment district' },
-      { type: 'timed', x: 192, z: 0, r: 9, time: 75, text: 'Deliver to Coastal Boulevard (1:15)' },
+      { type: 'timed', x: 224, z: 0, r: 9, time: 75, text: 'Deliver to Coastal Boulevard (1:15)' },
     ],
   },
   {
     id: 'm8', title: 'THE VELVET RUN', giver: 'Delia Voss', pay: 12000,
     brief: 'The big one. Hit the vault, hold the dockyard crew off, then run the whole city with the heat on your tail. Pull this off and you own the bay.',
     stages: [
-      { type: 'goto', x: 0, z: -64, r: 8, text: 'Reach the vault, Downtown' },
-      { type: 'kill', x: 0, z: -64, r: 18, count: 5, text: 'Hold off the Red Tide guards (5)' },
+      { type: 'goto', x: 32, z: -64, r: 8, text: 'Reach the vault, Downtown' },
+      { type: 'kill', x: 32, z: -64, r: 18, count: 5, text: 'Hold off the Red Tide guards (5)' },
       { type: 'timed', x: 296, z: 32, r: 9, time: 100, text: 'Run the score to the pier (1:40)' },
       { type: 'losewanted', text: 'Lose the heat' },
-      { type: 'goto', x: -256, z: 192, r: 10, text: 'Vanish into the hideout' },
+      { type: 'goto', x: -224, z: 192, r: 10, text: 'Vanish into the hideout' },
     ],
   },
 ];
@@ -117,13 +117,13 @@ function enterStage(rt, ctx) {
   }
   if (s.type === 'escort') {
     const van = buildCar(0xe8e2d0, {});
-    van.position.set(-64, 0, 256);
+    van.position.set(-32, 0, 224);
     van.rotation.y = Math.PI / 2;
     ctx.scene.add(van);
     rt.van = van;
     rt.vanPath = [
-      { x: 0, z: 256 }, { x: 64, z: 256 }, { x: 128, z: 256 },
-      { x: 192, z: 256 }, { x: 192, z: 256 },
+      { x: 0, z: 224 }, { x: 64, z: 224 }, { x: 128, z: 224 },
+      { x: 192, z: 224 }, { x: 192, z: 224 },
     ];
     rt.vanTarget = 0;
     rt.vanSpeed = 8;

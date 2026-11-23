@@ -138,10 +138,10 @@ function respawn() {
   police.clearAll();
   state.player.inCar = false;
   state.player.carId = null;
-  state.player.x = -64; state.player.z = -64;
+  state.player.x = -32; state.player.z = -32;
   state.player.heading = Math.PI / 2;
   const car = vehicles.playerCar;
-  car.x = -56; car.z = -64; car.heading = Math.PI / 2; car.speed = 0;
+  car.x = -24; car.z = -32; car.heading = Math.PI / 2; car.speed = 0;
   car.mesh.position.set(car.x, 0, car.z);
   car.mesh.rotation.y = car.heading - Math.PI / 2;
   state.money = Math.max(0, state.money - 200);
@@ -259,7 +259,7 @@ function step(dt) {
   }
   // Start next mission at the office beacon.
   if (!state.mission && input.pressed('enter')) {
-    const d = Math.hypot(state.player.x - (-64), state.player.z - (-64));
+    const d = Math.hypot(state.player.x - (-32), state.player.z - (-32));
     if (d < 9) startNextMission();
   }
   // Pause / music / retry / weapon slots.
@@ -309,7 +309,7 @@ function step(dt) {
   } else {
     // Idle office beacon for the next job.
     const next = nextMissionId(state.missionsDone);
-    city.setBeacon(-64, -64, !!next);
+    city.setBeacon(-32, -32, !!next);
   }
 
   // Hidden package pickup.

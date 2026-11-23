@@ -69,7 +69,7 @@ export function createState() {
     musicOn: true,
     muted: false,
     player: {
-      x: 20, z: 60, heading: Math.PI / 2, speed: 0,
+      x: 20, z: 32, heading: Math.PI / 2, speed: 0,
       inCar: false, carId: null, onFoot: true,
     },
     cameraZoom: 1,
