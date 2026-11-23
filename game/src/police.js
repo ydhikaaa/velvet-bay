@@ -132,6 +132,7 @@ export function createPolice(scene, state, vehicles) {
       heli.active = true;
       if (city?.dyn?.heli) {
         city.dyn.heli.visible = true;
+        city.dyn.heli.userData.baseY = 55;
         heli.angle += dt * 0.25;
         const hx = p.x + Math.sin(heli.angle) * 38;
         const hz = p.z + Math.cos(heli.angle) * 38;
@@ -141,7 +142,10 @@ export function createPolice(scene, state, vehicles) {
       }
     } else if (heli.active) {
       heli.active = false;
-      if (city?.dyn?.heli) city.dyn.heli.visible = false;
+      if (city?.dyn?.heli) {
+        city.dyn.heli.visible = false;
+        city.dyn.heli.userData.baseY = undefined;
+      }
     }
     // Roadblocks at 4+ stars, ahead of the player.
     if (state.wanted >= 4 && !roadblock) {

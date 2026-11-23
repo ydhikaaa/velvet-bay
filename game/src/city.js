@@ -488,10 +488,12 @@ export function createCity(scene) {
       dyn.beaconRing.scale.set(s, 1, s);
       dyn.beacon.material.opacity = 0.14 + Math.sin(state.time * 3) * 0.05;
     }
-    // Helicopter rotor + hover bob.
+    // Helicopter rotor + hover bob around the altitude it was placed at
+    // (55 for police pursuit, lower for staged screenshot fly-bys).
     if (dyn.heli.visible) {
       dyn.heli.userData.rotor.rotation.y += dt * 22;
-      dyn.heli.position.y = 55 + Math.sin(state.time * 1.3) * 2;
+      if (dyn.heli.userData.baseY === undefined) dyn.heli.userData.baseY = dyn.heli.position.y;
+      dyn.heli.position.y = dyn.heli.userData.baseY + Math.sin(state.time * 1.3) * 2;
     }
   }
 

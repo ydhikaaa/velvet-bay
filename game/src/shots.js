@@ -44,6 +44,7 @@ function showHeli(ctx, x, y, z) {
   const heli = ctx.city.dyn.heli;
   if (!heli) return;
   heli.visible = true;
+  heli.userData.baseY = y;
   heli.position.set(x, y, z);
 }
 
