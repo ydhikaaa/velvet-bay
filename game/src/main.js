@@ -266,10 +266,11 @@ function step(dt) {
     state.player.heading = car.heading;
     vehicles.setBeams(car, false);
   }
-  // Start next mission at the office beacon.
-  if (!state.mission && input.pressed('enter')) {
+  // Start next mission at the office beacon. Distance is checked BEFORE
+  // consuming the key, so E near a car still steals the car.
+  if (!state.mission && !state.player.inCar) {
     const d = Math.hypot(state.player.x - (-32), state.player.z - (-32));
-    if (d < 9) startNextMission();
+    if (d < 9 && input.pressed('enter')) startNextMission();
   }
   // Pause / music / retry / weapon slots.
   if (input.pressed('pause') && state.screen === 'play') {
