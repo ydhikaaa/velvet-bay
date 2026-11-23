@@ -36,10 +36,16 @@ export function createCombat(scene, state, camera) {
     if (w.ammo !== Infinity) w.ammo--;
     state.shotsFired++;
     const p = state.player;
-    // Aim from the camera through the screen center.
-    const origin = camera.position.clone();
+    // Aim horizontally where the camera faces: the camera sits above and
+    // behind the player looking down at them, so a ray from the camera
+    // through the crosshair would dive into the ground a few steps ahead.
+    // Flattening the direction keeps shots on target out to full range.
+    const origin = muzzleWorld();
     const dir = new THREE.Vector3();
     camera.getWorldDirection(dir);
+    dir.y = 0;
+    if (dir.lengthSq() < 0.001) dir.set(0, 0, 1);
+    dir.normalize();
     const pellets = w.pellets || 1;
     let hitAnything = false;
     for (let i = 0; i < pellets; i++) {
