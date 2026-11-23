@@ -9,7 +9,7 @@ function putPlayerInCar(ctx, x, z, heading, speed = 0) {
   const car = vehicles.playerCar;
   car.x = x; car.z = z; car.heading = heading; car.speed = speed;
   car.mesh.position.set(x, 0, z);
-  car.mesh.rotation.y = heading;
+  car.mesh.rotation.y = heading - Math.PI / 2;
   state.player.inCar = true;
   state.player.carId = car.id;
   state.player.x = x; state.player.z = z;
@@ -36,7 +36,7 @@ function seedTraffic(ctx, spots) {
     car.x = s.x; car.z = s.z; car.heading = s.h;
     car.speed = s.speed ?? 8;
     car.mesh.position.set(s.x, 0, s.z);
-    car.mesh.rotation.y = s.h;
+    car.mesh.rotation.y = s.h - Math.PI / 2;
   });
 }
 
@@ -61,20 +61,20 @@ export function stageShot(mode, ctx) {
     city.applyTimeOfDay('golden');
     state.timeOfDay = 'golden';
     state.clockMinutes = 17 * 60 + 35;
-    putPlayerInCar(ctx, 196, 60, Math.PI / 2, 14);
+    putPlayerInCar(ctx, 196, 32, Math.PI / 2, 14);
     seedTraffic(ctx, [
-      { x: 216, z: 58, h: Math.PI / 2, speed: 12 },
-      { x: 226, z: 64, h: Math.PI / 2, speed: 11 },
-      { x: 176, z: 62, h: Math.PI / 2, speed: 13 },
-      { x: 240, z: 56, h: -Math.PI / 2, speed: 10 },
+      { x: 216, z: 30, h: Math.PI / 2, speed: 12 },
+      { x: 226, z: 36, h: Math.PI / 2, speed: 11 },
+      { x: 176, z: 34, h: Math.PI / 2, speed: 13 },
+      { x: 240, z: 28, h: -Math.PI / 2, speed: 10 },
     ]);
-    showHeli(ctx, 232, 62, -6);
+    showHeli(ctx, 240, 26, 44);
     const rt = createMissionRuntime(missionById('m2'), ctx);
     rt.stageIndex = 0;
     state.mission = rt;
     state.missionId = 'm2';
     ctx.hud.say('DELIA', 'Package is on the pier, Rio. Grab it and run the city — you have two minutes.');
-    ctx.city.setBeacon(296, 60, true);
+    ctx.city.setBeacon(296, 32, true);
     state.cameraZoom = 1.15;
   } else if (mode === 'street') {
     // Premium street level at noon: downtown canyon, traffic + pedestrians.
@@ -95,11 +95,11 @@ export function stageShot(mode, ctx) {
     city.applyTimeOfDay('golden');
     state.timeOfDay = 'golden';
     state.clockMinutes = 18 * 60 + 5;
-    putPlayerInCar(ctx, 96, 60, Math.PI / 2, 18);
+    putPlayerInCar(ctx, 96, 32, Math.PI / 2, 18);
     seedTraffic(ctx, [
-      { x: 120, z: 58, h: Math.PI / 2, speed: 13 },
-      { x: 132, z: 64, h: Math.PI / 2, speed: 12 },
-      { x: 76, z: 62, h: Math.PI / 2, speed: 14 },
+      { x: 120, z: 30, h: Math.PI / 2, speed: 13 },
+      { x: 132, z: 36, h: Math.PI / 2, speed: 12 },
+      { x: 76, z: 34, h: Math.PI / 2, speed: 14 },
     ]);
     const rt = createMissionRuntime(missionById('m2'), ctx);
     rt.stageIndex = 1; // timed cross-city stage
@@ -122,7 +122,7 @@ export function stageShot(mode, ctx) {
       { x: 222, z: -36, h: Math.PI / 2, speed: 10 },
       { x: 168, z: -34, h: Math.PI / 2, speed: 12 },
     ]);
-    showHeli(ctx, 220, 58, 30);
+    showHeli(ctx, 222, 24, -8);
     ctx.hud.say('MARTA', 'The boulevard never sleeps. Neither do we.');
     state.cameraZoom = 1.1;
   }

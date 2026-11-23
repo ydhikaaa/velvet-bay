@@ -29,7 +29,7 @@ export function createVehicles(scene, state) {
     const color = kind === 'police' ? 0x1c2733 : rng.pick(PALETTE);
     const mesh = buildCar(color, {});
     mesh.position.set(x, 0, z);
-    mesh.rotation.y = heading;
+    mesh.rotation.y = heading - Math.PI / 2;
     scene.add(mesh);
     const car = {
       id: nextId++, mesh, kind: kind || 'traffic',
@@ -47,7 +47,7 @@ export function createVehicles(scene, state) {
       const p = randomRoadPoint(rng);
       car.x = p.x; car.z = p.z; car.heading = p.heading;
       mesh.position.set(p.x, 0, p.z);
-      mesh.rotation.y = p.heading;
+      mesh.rotation.y = p.heading - Math.PI / 2;
       pickWaypoint(car);
     }
     cars.push(car);
@@ -134,10 +134,10 @@ export function createVehicles(scene, state) {
         pickWaypoint(car);
       }
       car.mesh.position.set(car.x, 0, car.z);
-      car.mesh.rotation.y = car.heading;
+      car.mesh.rotation.y = car.heading - Math.PI / 2;
       // Wheel spin.
       const spin = car.speed * dt * 2.4;
-      for (const w of car.mesh.userData.wheels) w.rotation.x += spin;
+      for (const w of car.mesh.userData.wheels) w.rotation.z += spin;
     }
   }
 
@@ -179,12 +179,12 @@ export function createVehicles(scene, state) {
     state.player.speed = Math.abs(car.speed);
     state.stats.distanceDriven += Math.abs(car.speed) * dt;
     car.mesh.position.set(car.x, 0, car.z);
-    car.mesh.rotation.y = car.heading;
+    car.mesh.rotation.y = car.heading - Math.PI / 2;
     const spin = car.speed * dt * 2.4;
-    for (const w of car.mesh.userData.wheels) w.rotation.x += spin;
+    for (const w of car.mesh.userData.wheels) w.rotation.z += spin;
     // Headlight beams at dusk/night.
     const night = state.timeOfDay === 'night' || state.timeOfDay === 'dusk';
-    for (const b of car.mesh.userData.beams) b.material.opacity = night ? 0.16 : 0;
+    for (const b of car.mesh.userData.beams) b.material.opacity = night ? 0.28 : 0;
   }
 
   function nearestStealable(x, z, maxD = 5) {
@@ -199,7 +199,7 @@ export function createVehicles(scene, state) {
   }
 
   function setBeams(car, on) {
-    for (const b of car.mesh.userData.beams) b.material.opacity = on ? 0.16 : 0;
+    for (const b of car.mesh.userData.beams) b.material.opacity = on ? 0.28 : 0;
   }
 
   return {

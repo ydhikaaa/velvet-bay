@@ -80,7 +80,7 @@ export function createPolice(scene, state, vehicles) {
       const rx = -fz, rz = fx; // road-right vector
       const car = spawnCruiser(bx + rx * off, bz + rz * off);
       car.heading = heading + Math.PI / 2 + (off > 0 ? 0.35 : -0.35);
-      car.mesh.rotation.y = car.heading;
+      car.mesh.rotation.y = car.heading - Math.PI / 2;
       car.mesh.position.set(car.x, 0, car.z);
       car.roadblock = true;
       cars.push(car);
@@ -99,6 +99,9 @@ export function createPolice(scene, state, vehicles) {
   }
 
   function update(dt, events) {
+    // In screenshot staging the police hold still: no spawns, no pursuit,
+    // no ram toasts mid-shot. The HUD still shows the staged wanted level.
+    if (events?.frozen) return;
     const p = state.player;
     // Wanted decays when the player stays out of trouble and out of sight.
     const nearCop = cruisers.some((c) => Math.hypot(c.x - p.x, c.z - p.z) < 40)
@@ -133,7 +136,7 @@ export function createPolice(scene, state, vehicles) {
         const hx = p.x + Math.sin(heli.angle) * 38;
         const hz = p.z + Math.cos(heli.angle) * 38;
         city.dyn.heli.position.set(hx, 55 + Math.sin(state.time * 1.3) * 2, hz);
-        city.dyn.heli.rotation.y = Math.atan2(p.x - hx, p.z - hz);
+        city.dyn.heli.rotation.y = Math.atan2(p.x - hx, p.z - hz) - Math.PI / 2;
         city.dyn.heli.userData.rotor.rotation.y += dt * 22;
       }
     } else if (heli.active) {
@@ -162,9 +165,9 @@ export function createPolice(scene, state, vehicles) {
       c.x += Math.sin(c.heading) * c.speed * dt;
       c.z += Math.cos(c.heading) * c.speed * dt;
       c.mesh.position.set(c.x, 0, c.z);
-      c.mesh.rotation.y = c.heading;
+      c.mesh.rotation.y = c.heading - Math.PI / 2;
       const spin = c.speed * dt * 2.4;
-      for (const w of c.mesh.userData.wheels) w.rotation.x += spin;
+      for (const w of c.mesh.userData.wheels) w.rotation.z += spin;
       // Ram: contact with the player's car slows them and rattles the player.
       if (d < 4.6) {
         c.ramCooldown -= dt;

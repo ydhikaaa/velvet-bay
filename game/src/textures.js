@@ -138,8 +138,8 @@ export function grassTexture() {
   const key = 'grass';
   if (cache.has(key)) return cache.get(key);
   const [c, ctx] = canvas(256, 256);
-  ctx.fillStyle = '#4d7a3a'; ctx.fillRect(0, 0, 256, 256);
-  speckle(ctx, 256, 256, 3200, ['#3a5c2b', '#5f9448', '#6fae52', '#2f4d24', '#86b364'], 3);
+  ctx.fillStyle = '#4a6b34'; ctx.fillRect(0, 0, 256, 256);
+  speckle(ctx, 256, 256, 3200, ['#3d5a2c', '#577a3c', '#6b8a48', '#33491f', '#7a9a58'], 3);
   for (let i = 0; i < 40; i++) {
     ctx.fillStyle = 'rgba(120,160,80,0.25)';
     ctx.beginPath();

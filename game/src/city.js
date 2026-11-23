@@ -1,15 +1,12 @@
 // Velvet Bay — the city: renderer, cinematic sky, textured ground, 5+ distinct
 // districts, pier, beach, lamps, props, hidden packages, time of day.
 // Written fresh for round 10 (attempt 5).
-import { WORLD, createRng } from './state.js';
+import { WORLD, ROAD_LINES, createRng } from './state.js';
 import {
   asphaltTexture, sidewalkTexture, grassTexture, sandTexture,
   waterTexture, crosswalkTexture, glowTexture, cloudTexture,
 } from './textures.js';
 import { buildTower, buildPalm, buildLamp, buildBench, buildCrate, buildUmbrella, buildHelicopter, mat } from './models.js';
-
-export const ROAD_LINES = [];
-for (let v = -288; v <= 288; v += 64) ROAD_LINES.push(v);
 
 const PARK_BLOCKS = new Set(['-192,-192', '-192,192', '192,-192', '64,192']);
 
@@ -87,7 +84,13 @@ export function createCity(scene) {
   scene.add(hemi);
   const amb = new THREE.AmbientLight(0xffe0b8, 0.25);
   scene.add(amb);
-  dyn.sun = sun; dyn.hemi = hemi;
+  // Shadow-side fill: a dim warm light from the opposite side of the sun so
+  // shaded facades never go black (the "Minecraft" complaint was flat dark slabs).
+  const fill = new THREE.DirectionalLight(0xffd0a0, 0.55);
+  fill.position.set(-200, 120, -80);
+  scene.add(fill);
+  scene.add(fill.target);
+  dyn.sun = sun; dyn.hemi = hemi; dyn.fill = fill;
 
   // --- Sky dome + sun disc sprite + drifting clouds ---
   const skyMat = skyMaterial();
@@ -113,12 +116,12 @@ export function createCity(scene) {
     dyn.clouds.push(sp);
   }
 
-  // --- Ground: grass base, road strips, sidewalks, crosswalks ---
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(1100, 1100),
+  // Ground: grass base — ends at the beach (x=292) so the sea stays visible.
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(612, 1100),
     new THREE.MeshStandardMaterial({ map: grassTexture(), roughness: 1 }));
-  ground.material.map.repeat.set(24, 24);
+  ground.material.map.repeat.set(14, 24);
   ground.rotation.x = -Math.PI / 2;
-  ground.position.set(60, -0.08, 0);
+  ground.position.set(-14, -0.08, 0);
   ground.receiveShadow = true;
   scene.add(ground);
 
@@ -182,7 +185,8 @@ export function createCity(scene) {
   scene.add(water);
   dyn.water = water;
 
-  // --- Pier: deck planks (extruded), posts, umbrellas, end platform ---
+  // --- Pier: deck planks (extruded), posts, umbrellas, end platform.
+  // The pier runs along the z=32 road line so cars can drive onto it.
   const pierGroup = new THREE.Group();
   const deckShape = new THREE.Shape();
   deckShape.moveTo(0, -6); deckShape.lineTo(64, -6); deckShape.lineTo(64, 6); deckShape.lineTo(0, 6);
@@ -193,7 +197,7 @@ export function createCity(scene) {
   const deck = new THREE.Mesh(deckGeo, new THREE.MeshStandardMaterial({
     color: 0x8a6a44, roughness: 0.9,
   }));
-  deck.position.set(240, 1.2, 60);
+  deck.position.set(240, 1.2, 32);
   deck.castShadow = true; deck.receiveShadow = true;
   pierGroup.add(deck);
   // deck plank lines: thin dark cylinders laid across
@@ -201,18 +205,18 @@ export function createCity(scene) {
   plankGeo.rotateX(Math.PI / 2);
   for (let x = 244; x < 304; x += 4) {
     const p = new THREE.Mesh(plankGeo, mat(0x6b4f2e, { rough: 0.95 }));
-    p.position.set(x, 1.48, 60);
+    p.position.set(x, 1.48, 32);
     pierGroup.add(p);
   }
   for (let x = 246; x < 304; x += 8) {
-    for (const z of [55, 65]) {
+    for (const z of [27, 37]) {
       const post = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 3.4, 8),
         mat(0x5d4630, { rough: 0.9 }));
       post.position.set(x, -0.2, z);
       pierGroup.add(post);
     }
   }
-  for (const [ux, uz] of [[292, 54], [292, 66], [284, 60]]) {
+  for (const [ux, uz] of [[292, 26], [292, 38], [284, 32]]) {
     const um = buildUmbrella();
     um.position.set(ux, 1.5, uz);
     pierGroup.add(um);
@@ -225,7 +229,7 @@ export function createCity(scene) {
     for (let bz = -256; bz <= 256; bz += 64) {
       if (bx > 200) continue; // beach blocks stay open
       if (PARK_BLOCKS.has(`${bx},${bz}`)) continue;
-      if (bz === 60 && bx >= 192) continue; // pier approach stays clear
+      if (bz === 32 && bx >= 192) continue; // pier approach stays clear
       towerSpots.push([bx, bz]);
     }
   }
@@ -337,7 +341,7 @@ export function createCity(scene) {
   // --- Hidden packages: 12 glowing pickups ---
   const pkgSpots = [
     [-256, -256], [-192, 64], [-64, -192], [0, -256], [128, -64], [192, 128],
-    [-256, 192], [64, 256], [-128, -64], [192, -192], [0, 128], [296, 60],
+    [-256, 192], [64, 256], [-128, -64], [192, -192], [0, 128], [296, 32],
   ];
   for (let i = 0; i < pkgSpots.length; i++) {
     const [px, pz] = pkgSpots[i];
@@ -363,13 +367,14 @@ export function createCity(scene) {
     dyn.packages.push(g);
   }
 
-  // --- Mission beacon: tall light pillar + ground ring ---
-  const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.4, 60, 10, 1, true),
+  // --- Mission beacon: a slim light pillar + ground ring (kept subtle so it
+  // never reads as a stray beam in screenshots) ---
+  const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.9, 26, 10, 1, true),
     new THREE.MeshBasicMaterial({
-      color: 0xffd23e, transparent: true, opacity: 0.32,
+      color: 0xffd23e, transparent: true, opacity: 0.18,
       blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
     }));
-  beacon.position.y = 30;
+  beacon.position.y = 13;
   beacon.visible = false;
   scene.add(beacon);
   dyn.beacon = beacon;
@@ -431,7 +436,7 @@ export function createCity(scene) {
       dyn.sunDir.set(-0.3, 0.5, -0.2).normalize();
       sun.position.set(-120, 200, -80);
       sun.intensity = 0.55; sun.color.set(0x8fb0e8);
-      hemi.intensity = 0.35;
+      hemi.intensity = 0.5;
       scene.fog.color.set(0x0e1526); scene.fog.near = 120; scene.fog.far = 460;
       u.topColor.value.set(0x060a18); u.midColor.value.set(0x101c38); u.botColor.value.set(0x1a2036);
       u.sunDir.value.set(-0.3, 0.5, -0.2).normalize();
@@ -477,7 +482,7 @@ export function createCity(scene) {
     if (dyn.beacon.visible) {
       const s = 1 + Math.sin(state.time * 3) * 0.12;
       dyn.beaconRing.scale.set(s, 1, s);
-      dyn.beacon.material.opacity = 0.26 + Math.sin(state.time * 3) * 0.08;
+      dyn.beacon.material.opacity = 0.14 + Math.sin(state.time * 3) * 0.05;
     }
     // Helicopter rotor + hover bob.
     if (dyn.heli.visible) {
@@ -493,7 +498,7 @@ export function createCity(scene) {
       dyn.beacon.visible = visible;
       dyn.beaconRing.visible = visible;
       if (visible) {
-        dyn.beacon.position.set(x, 30, z);
+        dyn.beacon.position.set(x, 13, z);
         dyn.beaconRing.position.set(x, 0.3, z);
       }
     },

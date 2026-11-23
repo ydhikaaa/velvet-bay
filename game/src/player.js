@@ -77,16 +77,16 @@ export function createPlayer(scene, state) {
 
   function updateCamera(dt, camera, focusCar) {
     const p = state.player;
-    const dist = 9 * state.cameraZoom;
-    const height = 3.4 + cam.pitch * 5;
+    const dist = 7 * state.cameraZoom;
+    const height = 2.6 + cam.pitch * 3.2;
     let tx, tz, ty;
     if (p.inCar && focusCar) {
       const back = focusCar.heading + Math.PI;
-      tx = focusCar.x + Math.sin(back) * dist * 1.15;
-      tz = focusCar.z + Math.cos(back) * dist * 1.15;
-      ty = 3.2 + cam.pitch * 3;
+      tx = focusCar.x + Math.sin(back) * dist;
+      tz = focusCar.z + Math.cos(back) * dist;
+      ty = 2.3 + cam.pitch * 2.2;
       camera.position.lerp(new THREE.Vector3(tx, ty, tz), Math.min(1, 7 * dt));
-      camera.lookAt(focusCar.x + Math.sin(focusCar.heading) * 8, 1.6, focusCar.z + Math.cos(focusCar.heading) * 8);
+      camera.lookAt(focusCar.x + Math.sin(focusCar.heading) * 8, 1.4, focusCar.z + Math.cos(focusCar.heading) * 8);
     } else {
       const back = cam.yaw + Math.PI;
       tx = p.x + Math.sin(back) * dist;

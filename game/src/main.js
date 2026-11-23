@@ -143,7 +143,7 @@ function respawn() {
   const car = vehicles.playerCar;
   car.x = -56; car.z = -64; car.heading = Math.PI / 2; car.speed = 0;
   car.mesh.position.set(car.x, 0, car.z);
-  car.mesh.rotation.y = car.heading;
+  car.mesh.rotation.y = car.heading - Math.PI / 2;
   state.money = Math.max(0, state.money - 200);
   saveGame(state);
 }
@@ -293,7 +293,7 @@ function step(dt) {
   vehicles.updatePlayerCar(dt, input, vehicleEvents);
   player.update(dt, input, vehicles, vehicleEvents);
   pedestrians.update(dt, pedEvents);
-  police.update(dt, { city });
+  police.update(dt, { city, frozen: !!shotMode });
   combat.update(dt, combatEvents);
   city.update(dt, state, state.player);
 

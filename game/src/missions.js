@@ -17,7 +17,7 @@ export const MISSIONS = [
     id: 'm2', title: 'HARBOR LIGHTS', giver: 'Delia Voss', pay: 4500,
     brief: 'A package is waiting on the pier. Grab it, then run it across the city before the clock dies. Lose the heat, then vanish into the hideout.',
     stages: [
-      { type: 'goto', x: 296, z: 60, r: 7, text: 'Pick up the package at the end of the pier' },
+      { type: 'goto', x: 296, z: 32, r: 7, text: 'Pick up the package at the end of the pier' },
       { type: 'timed', x: -256, z: 192, r: 10, time: 120, text: 'Cross-city run — reach the hideout in 2:00' },
       { type: 'losewanted', text: 'Lose the heat — stay out of sight until the stars clear' },
       { type: 'goto', x: -256, z: 192, r: 10, text: 'Slip into the hideout' },
@@ -27,7 +27,7 @@ export const MISSIONS = [
     id: 'm3', title: 'PIER PRESSURE', giver: 'Delia Voss', pay: 2200,
     brief: 'Red Tide is leaning on the pier crew. Show them the door — then report back to me.',
     stages: [
-      { type: 'goto', x: 296, z: 60, r: 7, text: 'Meet the pier crew' },
+      { type: 'goto', x: 296, z: 32, r: 7, text: 'Meet the pier crew' },
       { type: 'kill', x: -192, z: -192, r: 18, count: 4, text: 'Clear the Red Tide crew at the dockyard (4)' },
       { type: 'goto', x: -64, z: -64, r: 8, text: 'Report back to Delia' },
     ],
@@ -73,7 +73,7 @@ export const MISSIONS = [
     stages: [
       { type: 'goto', x: 0, z: -64, r: 8, text: 'Reach the vault, Downtown' },
       { type: 'kill', x: 0, z: -64, r: 18, count: 5, text: 'Hold off the Red Tide guards (5)' },
-      { type: 'timed', x: 296, z: 60, r: 9, time: 100, text: 'Run the score to the pier (1:40)' },
+      { type: 'timed', x: 296, z: 32, r: 9, time: 100, text: 'Run the score to the pier (1:40)' },
       { type: 'losewanted', text: 'Lose the heat' },
       { type: 'goto', x: -256, z: 192, r: 10, text: 'Vanish into the hideout' },
     ],
@@ -224,11 +224,11 @@ export function updateMission(rt, dt, ctx) {
       if (rt.vanTarget >= rt.vanPath.length) return advance(rt, ctx);
     } else {
       const h = Math.atan2(dx / d, dz / d);
-      van.rotation.y = h;
+      van.rotation.y = h - Math.PI / 2;
       van.position.x += (dx / d) * rt.vanSpeed * dt;
       van.position.z += (dz / d) * rt.vanSpeed * dt;
       const spin = rt.vanSpeed * dt * 2.4;
-      for (const w of van.userData.wheels) w.rotation.x += spin;
+      for (const w of van.userData.wheels) w.rotation.z += spin;
     }
     const pd = Math.hypot(p.x - van.position.x, p.z - van.position.z);
     if (pd > 55) ctx.say('MARTA', 'You are falling behind the van — catch up!');

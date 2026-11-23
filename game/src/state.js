@@ -7,6 +7,10 @@ export const SAVE_KEY = 'velvet-bay-save-v2';
 // beach and the sea; the pier reaches out from the Coastal Boulevard.
 export const WORLD = { min: -320, max: 320, beachX: 240, seaX: 292, roadStep: 64 };
 
+// Road grid lines (both axes): the city streets run on these coordinates.
+export const ROAD_LINES = [];
+for (let v = -288; v <= 288; v += 64) ROAD_LINES.push(v);
+
 export const DISTRICTS = [
   { name: 'DOWNTOWN', x0: -130, z0: -130, x1: 130, z1: 30, hue: 'downtown' },
   { name: 'HARBOR', x0: -320, z0: -320, x1: -130, z1: -130, hue: 'harbor' },

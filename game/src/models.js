@@ -110,16 +110,17 @@ export function buildCar(color = 0xc22430, opts = {}) {
     group.add(t);
   }
   // Headlight beam cones (visible at dusk/night; opacity driven by city).
+  // ConeGeometry's apex sits at +h/2 on Y: rotate it so the apex is at the
+  // lamp (origin) and the wide opening faces forward (+X, the car's nose).
   const beamGeo = new THREE.ConeGeometry(0.55, 3.4, 12, 1, true);
-  beamGeo.rotateX(Math.PI / 2); // tip at origin, opening forward (+Z -> rotated below)
-  beamGeo.translate(0, 0, 1.7);
+  beamGeo.rotateZ(Math.PI / 2);
+  beamGeo.translate(1.7, 0, 0);
   const beams = [];
   for (const wz of [0.55, -0.55]) {
     const beam = new THREE.Mesh(beamGeo, new THREE.MeshBasicMaterial({
       color: 0xffe9a8, transparent: true, opacity: 0.0,
       blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
     }));
-    beam.rotation.y = Math.PI / 2; // cone axis along +X (car forward)
     beam.position.set(2.1, 0.55, wz);
     group.add(beam);
     beams.push(beam);
@@ -147,10 +148,10 @@ export function buildCharacter({ shirt = 0x2f6fd0, skin = 0xc98d64, pants = 0x23
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.21, 16, 12), skinMat);
   head.position.y = 1.78; head.castShadow = true;
   group.add(head);
-  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.215, 16, 10), hairMat);
-  hair.scale.set(1, 0.72, 1);
-  hair.position.set(0, 1.86, -0.03);
-  group.add(hair);
+  const hairMesh = new THREE.Mesh(new THREE.SphereGeometry(0.215, 16, 10), hairMat);
+  hairMesh.scale.set(1, 0.72, 1);
+  hairMesh.position.set(0, 1.86, -0.03);
+  group.add(hairMesh);
   // Arms: capsule, pivoted at the shoulder via a group.
   const arms = [];
   for (const side of [-1, 1]) {
