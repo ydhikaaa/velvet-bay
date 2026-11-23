@@ -237,6 +237,10 @@ function step(dt) {
   state.clockMinutes += dt * 1.0; // 1 real second = 1 game minute
   if (state.clockMinutes >= 1440) state.clockMinutes -= 1440;
 
+  // Screenshot staging: keep the car rolling so chase shots read as
+  // mid-action (the car drives toward the pier while the scene settles).
+  if (shotMode && state.player.inCar) input.keys.add('up');
+
   // Auto time-of-day from the clock (skipped in shot mode).
   if (!shotMode) {
     const h = Math.floor(state.clockMinutes / 60);
@@ -365,7 +369,7 @@ function frame() {
   city.renderer.render(scene, city.camera);
   if (shotArmed) {
     shotFrames++;
-    if (shotFrames >= 45) {
+    if (shotFrames >= 60) {
       window.__shotReady = true;
       shotArmed = false;
     }

@@ -61,21 +61,21 @@ export function stageShot(mode, ctx) {
     city.applyTimeOfDay('golden');
     state.timeOfDay = 'golden';
     state.clockMinutes = 17 * 60 + 35;
-    putPlayerInCar(ctx, 196, 32, Math.PI / 2, 14);
+    putPlayerInCar(ctx, 150, 32, Math.PI / 2, 14);
     seedTraffic(ctx, [
       { x: 216, z: 30, h: Math.PI / 2, speed: 12 },
       { x: 226, z: 36, h: Math.PI / 2, speed: 11 },
       { x: 176, z: 34, h: Math.PI / 2, speed: 13 },
       { x: 240, z: 28, h: -Math.PI / 2, speed: 10 },
     ]);
-    showHeli(ctx, 240, 26, 44);
+    showHeli(ctx, 255, 30, 55);
     const rt = createMissionRuntime(missionById('m2'), ctx);
     rt.stageIndex = 0;
     state.mission = rt;
     state.missionId = 'm2';
     ctx.hud.say('DELIA', 'Package is on the pier, Rio. Grab it and run the city — you have two minutes.');
     ctx.city.setBeacon(296, 32, true);
-    state.cameraZoom = 1.15;
+    state.cameraZoom = 1.0;
   } else if (mode === 'street') {
     // Premium street level at noon: downtown canyon, traffic + pedestrians.
     city.applyTimeOfDay('noon');
@@ -95,7 +95,7 @@ export function stageShot(mode, ctx) {
     city.applyTimeOfDay('golden');
     state.timeOfDay = 'golden';
     state.clockMinutes = 18 * 60 + 5;
-    putPlayerInCar(ctx, 96, 32, Math.PI / 2, 18);
+    putPlayerInCar(ctx, 70, 32, Math.PI / 2, 18);
     seedTraffic(ctx, [
       { x: 120, z: 30, h: Math.PI / 2, speed: 13 },
       { x: 132, z: 36, h: Math.PI / 2, speed: 12 },
@@ -116,13 +116,13 @@ export function stageShot(mode, ctx) {
     city.applyTimeOfDay('night');
     state.timeOfDay = 'night';
     state.clockMinutes = 21 * 60 + 40;
-    putPlayerInCar(ctx, 188, -32, Math.PI / 2, 12);
+    putPlayerInCar(ctx, 160, -32, Math.PI / 2, 12);
     seedTraffic(ctx, [
       { x: 210, z: -30, h: Math.PI / 2, speed: 11 },
       { x: 222, z: -36, h: Math.PI / 2, speed: 10 },
       { x: 168, z: -34, h: Math.PI / 2, speed: 12 },
     ]);
-    showHeli(ctx, 222, 24, -8);
+    showHeli(ctx, 245, 28, -20);
     ctx.hud.say('MARTA', 'The boulevard never sleeps. Neither do we.');
     state.cameraZoom = 1.1;
   }

@@ -86,7 +86,7 @@ export function createPlayer(scene, state) {
       tz = focusCar.z + Math.cos(back) * dist;
       ty = 2.3 + cam.pitch * 2.2;
       camera.position.lerp(new THREE.Vector3(tx, ty, tz), Math.min(1, 7 * dt));
-      camera.lookAt(focusCar.x + Math.sin(focusCar.heading) * 8, 1.4, focusCar.z + Math.cos(focusCar.heading) * 8);
+      camera.lookAt(focusCar.x + Math.sin(focusCar.heading) * 8, 1.1, focusCar.z + Math.cos(focusCar.heading) * 8);
     } else {
       const back = cam.yaw + Math.PI;
       tx = p.x + Math.sin(back) * dist;

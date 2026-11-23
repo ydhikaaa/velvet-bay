@@ -320,18 +320,20 @@ export function createCity(scene) {
     }
   }
 
-  // --- Distant skyline silhouettes for depth (dark extruded slabs) ---
-  for (let i = 0; i < 14; i++) {
-    const a = (i / 14) * Math.PI * 2;
+  // --- Distant skyline silhouettes for depth. Only on the land side: the
+  // sea sector (east) stays open so the horizon reads as water, not slabs.
+  // Hazy blue-grey, not black, so they read as atmosphere, not monoliths.
+  for (let i = 0; i < 12; i++) {
+    const a = Math.PI * (0.35 + (i / 12) * 1.3); // 63..297 deg: land side only
     const r = 520;
     const shape = new THREE.Shape();
-    const w = rng.range(30, 60), h = rng.range(60, 150);
+    const w = rng.range(30, 60), h = rng.range(40, 90);
     shape.moveTo(-w / 2, 0); shape.lineTo(w / 2, 0); shape.lineTo(w / 2, h);
     shape.lineTo(w / 4, h + 12); shape.lineTo(-w / 4, h + 12); shape.lineTo(-w / 2, h);
     shape.closePath();
     const geo = new THREE.ExtrudeGeometry(shape, { depth: 8, bevelEnabled: false });
     const sil = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
-      color: 0x2a2438, roughness: 1,
+      color: 0x554e6e, roughness: 1,
     }));
     sil.position.set(Math.cos(a) * r, 0, Math.sin(a) * r);
     sil.lookAt(0, 0, 0);
