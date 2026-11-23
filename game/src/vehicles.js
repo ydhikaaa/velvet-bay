@@ -10,13 +10,14 @@ const NAMES = ['Comet', 'Stallion', 'Falcon', 'Vortex', 'Cruiser', 'Specter', 'R
 
 function roadCoord(v) { return v; }
 
-// Pick a random point on the road grid.
+// Pick a random point on the road grid. Forward is (sin h, cos h): heading
+// PI/2 drives +x, 0 drives +z. A car on a road running along X heads +-PI/2.
 function randomRoadPoint(rng) {
   const horizontal = rng.chance(0.5);
   const line = rng.pick(ROAD_LINES);
   const along = rng.range(-288, 288);
-  return horizontal ? { x: along, z: line, heading: rng.chance(0.5) ? 0 : Math.PI }
-    : { x: line, z: along, heading: rng.chance(0.5) ? Math.PI / 2 : -Math.PI / 2 };
+  return horizontal ? { x: along, z: line, heading: rng.chance(0.5) ? Math.PI / 2 : -Math.PI / 2 }
+    : { x: line, z: along, heading: rng.chance(0.5) ? 0 : Math.PI };
 }
 
 export function createVehicles(scene, state) {
@@ -55,15 +56,17 @@ export function createVehicles(scene, state) {
 
   function pickWaypoint(car) {
     // Traffic follows the grid: pick a random road line, drive along it.
-    const onX = Math.abs(Math.sin(car.heading)) < 0.5; // heading ~0/PI -> along X
-    if (onX) {
+    // alongX: fixed z-line, heading +-PI/2 (forward is (sin h, cos h)).
+    if (rng.chance(0.5)) {
       const z = rng.pick(ROAD_LINES);
-      car.target = { x: car.heading < Math.PI / 2 || car.heading > Math.PI * 1.5 ? 288 : -288, z, alongX: true };
-      car.heading = car.target.x > car.x ? 0 : Math.PI;
+      const dir = rng.chance(0.5) ? 1 : -1;
+      car.target = { x: dir > 0 ? 288 : -288, z, alongX: true };
+      car.heading = dir > 0 ? Math.PI / 2 : -Math.PI / 2;
     } else {
       const x = rng.pick(ROAD_LINES);
-      car.target = { x, z: car.heading > 0 ? 288 : -288, alongX: false };
-      car.heading = car.target.z > car.z ? Math.PI / 2 : -Math.PI / 2;
+      const dir = rng.chance(0.5) ? 1 : -1;
+      car.target = { x, z: dir > 0 ? 288 : -288, alongX: false };
+      car.heading = dir > 0 ? 0 : Math.PI;
     }
   }
 
@@ -115,10 +118,10 @@ export function createVehicles(scene, state) {
       if (t) {
         if (t.alongX) {
           car.z += Math.sign(t.z - car.z) * Math.min(Math.abs(t.z - car.z), 6 * dt);
-          car.heading = car.target.x > car.x ? 0 : Math.PI;
+          car.heading = car.target.x > car.x ? Math.PI / 2 : -Math.PI / 2;
         } else {
           car.x += Math.sign(t.x - car.x) * Math.min(Math.abs(t.x - car.x), 6 * dt);
-          car.heading = car.target.z > car.z ? Math.PI / 2 : -Math.PI / 2;
+          car.heading = car.target.z > car.z ? 0 : Math.PI;
         }
       }
       car.x += Math.sin(car.heading) * car.speed * dt;

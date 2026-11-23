@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Velvet Bay — Open World Crime</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0b1020;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif; color: #fff; }
+  #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  #hud { position: fixed; inset: 0; pointer-events: none; display: none; }
+  #hud.on { display: block; }
+  .panel { position: absolute; text-shadow: 0 2px 4px rgba(0,0,0,.85); }
+  #wanted { top: 12px; left: 50%; transform: translateX(-50%); font-size: 30px;
+    letter-spacing: 5px; color: #ffd23e; }
+  #wanted .dim { color: rgba(255,255,255,.28); }
+  #stats { top: 12px; right: 16px; text-align: right; font-size: 19px; line-height: 1.45; }
+  #stats b { color: #7dff9b; }
+  #stats .sub { font-size: 13px; color: #cfe0ff; letter-spacing: 1px; }
+  .bar { width: 170px; height: 10px; background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.7); margin-top: 4px; margin-left: auto; }
+  #healthfill { height: 100%; width: 100%; background: linear-gradient(90deg,#ff5a5a,#ff9d5a); }
+  #armorfill { height: 100%; width: 0; background: linear-gradient(90deg,#6db3ff,#bfe0ff); }
+  #objective { top: 12px; left: 16px; max-width: 360px; font-size: 16px; line-height: 1.45;
+    background: rgba(8,12,26,.62); padding: 10px 14px; border-left: 4px solid #ffd23e;
+    border-radius: 0 6px 6px 0; }
+  #objective .title { color: #ffd23e; font-weight: 800; letter-spacing: 1.5px; font-size: 17px; }
+  #objective .giver { color: #9fb6e8; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+  #minimap { position: absolute; left: 16px; bottom: 16px; width: 190px; height: 190px;
+    border: 2px solid rgba(255,255,255,.75); border-radius: 6px;
+    background: rgba(8,14,28,.88); box-shadow: 0 4px 18px rgba(0,0,0,.6); }
+  #speed { right: 16px; bottom: 16px; font-size: 36px; font-weight: 800; text-align: right; }
+  #speed small { font-size: 14px; font-weight: 400; }
+  #speed .veh { font-size: 14px; font-weight: 600; color: #ffd23e; letter-spacing: 1px; }
+  #hint { bottom: 16px; left: 50%; transform: translateX(-50%); font-size: 13px;
+    opacity: .9; background: rgba(0,0,0,.45); padding: 6px 14px; border-radius: 20px;
+    white-space: nowrap; }
+  #crosshair { top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 22px;
+    color: #fff; display: none; }
+  #toast { top: 92px; left: 50%; transform: translateX(-50%); font-size: 22px;
+    font-weight: 700; color: #7dff9b; opacity: 0; transition: opacity .3s; white-space: nowrap; }
+  #slots { bottom: 64px; right: 16px; font-size: 13px; }
+  #slots .slot { display: inline-block; background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.35);
+    border-radius: 4px; padding: 4px 8px; margin-left: 6px; color: #dfe8ff; }
+  #slots .slot.active { border-color: #ffd23e; color: #ffd23e; background: rgba(60,45,0,.65); }
+  #pd { top: 64px; right: 16px; font-size: 14px; color: #ff8a7a; background: rgba(40,0,0,.5);
+    border: 1px solid rgba(255,90,90,.5); border-radius: 6px; padding: 6px 10px; display: none; }
+  #pd.on { display: block; }
+  #pd b { letter-spacing: 1px; }
+  #crew { bottom: 214px; left: 16px; font-size: 12px; }
+  #crew .chip { display: inline-block; background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.3);
+    border-radius: 20px; padding: 3px 9px; margin-right: 6px; color: #dfe8ff; letter-spacing: .5px; }
+  #crew .chip.gold { border-color: #ffd23e; color: #ffd23e; }
+  #dialogue { bottom: 100px; left: 50%; transform: translateX(-50%); max-width: 560px;
+    background: rgba(8,12,26,.78); border: 1px solid rgba(255,210,62,.55); border-radius: 8px;
+    padding: 10px 16px; font-size: 15px; line-height: 1.5; display: none; }
+  #dialogue.on { display: block; }
+  #dialogue .name { color: #ffd23e; font-weight: 800; letter-spacing: 1px; font-size: 12px; }
+  #damage { position: fixed; inset: 0; pointer-events: none; display: none;
+    box-shadow: inset 0 0 90px 30px rgba(255,0,0,.55); }
+  .screen { position: fixed; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    background: linear-gradient(180deg, rgba(10,16,40,.55), rgba(10,16,40,.88)); z-index: 5; }
+  .screen h1 { font-size: 64px; margin: 0; letter-spacing: 6px; color: #ffd23e;
+    text-shadow: 0 4px 0 #b3541e, 0 8px 24px rgba(0,0,0,.8); }
+  .screen h2 { font-size: 20px; font-weight: 400; color: #ffe9a8; margin: 8px 0 4px; }
+  .screen p { max-width: 620px; line-height: 1.6; color: #dfe8ff; }
+  .screen .keys { font-size: 14px; color: #bcd0ff; line-height: 1.9; }
+  .screen button { pointer-events: auto; margin-top: 18px; font-size: 20px; font-weight: 700;
+    padding: 14px 44px; border: none; border-radius: 8px; cursor: pointer;
+    background: #ffd23e; color: #231303; box-shadow: 0 6px 0 #b3541e; }
+  .screen button:hover { filter: brightness(1.08); }
+  #pause, #busted, #wasted { display: none; }
+  #busted h1, #wasted h1 { color: #ff5a5a; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<div id="hud">
+  <div class="panel" id="wanted"></div>
+  <div class="panel" id="stats">
+    <div>$<b id="money">0</b></div>
+    <div class="sub"><span id="clock">17:20</span> · <span id="district">VELVET BAY</span></div>
+    <div class="sub">PACKAGES <span id="pkgcount">0/12</span></div>
+    <div class="bar"><div id="healthfill"></div></div>
+    <div class="bar"><div id="armorfill"></div></div>
+  </div>
+  <div class="panel" id="objective">
+    <div class="title" id="objtitle">VELVET BAY</div>
+    <div class="giver" id="objgiver"></div>
+    <div id="objtext">Free roam</div>
+  </div>
+  <div class="panel" id="pd"><b>BAY PD</b> · <span id="pdunits"></span></div>
+  <canvas id="minimap" width="190" height="190"></canvas>
+  <div class="panel" id="crew"></div>
+  <div class="panel" id="slots"></div>
+  <div class="panel" id="speed"></div>
+  <div class="panel" id="hint"></div>
+  <div class="panel" id="crosshair">+</div>
+  <div class="panel" id="toast"></div>
+  <div class="panel" id="dialogue"><div class="name" id="dlgName"></div><div id="dlgText"></div></div>
+</div>
+<div id="damage"></div>
+
+<div class="screen" id="start">
+  <h1>VELVET BAY</h1>
+  <h2>An open-world crime story &mdash; a sun-soaked coastal city, yours to take.</h2>
+  <p>You are <b>Rio Marlowe</b>, a wheelman fresh out of the Velvet Bay docks. The city runs on
+  stolen cars, fast money and faster getaways. Run 8 story jobs for fixer
+  <b>Delia Voss</b> and <b>Marta Quill</b>, hunt 12 hidden packages, stay ahead of the Bay PD &mdash; and own the bay.</p>
+  <p class="keys">W A S D move &nbsp;&middot;&nbsp; SHIFT run &nbsp;&middot;&nbsp; E enter / exit car &nbsp;&middot;&nbsp;
+  MOUSE drag to look &nbsp;&middot;&nbsp; WHEEL zoom &nbsp;&middot;&nbsp; CLICK / F shoot &nbsp;&middot;&nbsp; 1-4 weapons &nbsp;&middot;&nbsp;
+  SPACE handbrake &nbsp;&middot;&nbsp; P pause &nbsp;&middot;&nbsp; M music &nbsp;&middot;&nbsp; R retry mission</p>
+  <button id="startBtn">START ENGINE</button>
+  <p class="keys" id="saveNote"></p>
+</div>
+
+<div class="screen" id="pause">
+  <h1>PAUSED</h1>
+  <p>Velvet Bay waits for no one. Except right now.</p>
+  <button id="resumeBtn">RESUME</button>
+  <p class="keys">Progress saves automatically.</p>
+</div>
+
+<div class="screen" id="busted">
+  <h1>BUSTED</h1>
+  <p>The Bay PD caught up with you. Bail cost you $200. Delia still has work for you.</p>
+  <button id="bustedBtn">BACK TO THE STREETS</button>
+</div>
+
+<div class="screen" id="wasted">
+  <h1>WASTED</h1>
+  <p>Velvet Bay chewed you up. The hospital patched you up &mdash; $200 lighter.</p>
+  <button id="wastedBtn">BACK TO THE STREETS</button>
+</div>
+
+<script src="./vendor/three.min.js"></script>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
