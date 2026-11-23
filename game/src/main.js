@@ -71,6 +71,8 @@ const shotCtx = {
 
 // Geometry audit hook for the headless verification gate.
 window.__geometryAudit = () => auditGeometry(scene);
+// Test hook: let automated QA force a save (the game itself autosaves).
+window.__saveGame = () => saveGame(state);
 window.__game = { state, city, vehicles, police, pedestrians, combat, MISSIONS };
 
 let shotArmed = false;
